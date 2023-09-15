@@ -24,8 +24,10 @@ router.get('/dashboard',isAuthenticate, async (req, res) => {
 })
 
 router.post('/logout', async (req, res) => {
+    let device_id = req.signedCookies.device_id;
+    res.clearCookie('device_id')
     await req.session.destroy();
-    await deleteLoginInfo(req.sessionID)
+    await deleteLoginInfo(device_id)
     return res.redirect('/');
 })
 
