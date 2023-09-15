@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Dashboard</title>
+    <style>
+        /* Add your CSS styling here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .login-logs {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .log-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+        }
+
+        .log-entry span {
+            flex: 1;
+        }
+
+        .log-entry .timestamp {
+            flex: 2;
+            text-align: right;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .signout-button {
+            background-color: #ff6347; /* Red color for the button */
+            color: #fff; /* White text color */
+            padding: 10px 20px; /* Padding around the text */
+            border: none; /* No border */
+            cursor: pointer; /* Cursor style on hover */
+            font-size: 16px;
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        .signout-button:hover {
+            background-color: #ff4c3b; /* Darker red color on hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Login Dashboard <%= name %></h1>
+        <h1>Token:  <%= token %></h1>
+        <form action="/logout" method="POST">
+            <button class="signout-button" type="submit">Sign Out</button>
+        </form>
+    </header>
+    <div class="container">
+        <h2>Recent Login Activity</h2>
+        <div class="login-logs">
+            <% loginInfos.forEach(function(item) { %>
+                <div class="log-entry">
+                    <span><%= `You logged in at ${item.location} using ${item.device_type}  with ip: ${item.ip}` %></span>
+                    <span class="timestamp"><%= new Date(Number(item.loggedinat)) %></span>
+                    <form action="/revoke" method="POST">
+                        <input type="hidden" name="id" id="id" value="<%= item.device_id %>">
+                        <button class="signout-button" type="submit">Sign out this device</button>
+                    </form>
+                </div>
+            <% }); %>
+            <!-- Add more log entries here -->
+        </div>
+    </div>
+</body>
+</html>

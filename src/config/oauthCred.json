@@ -1,0 +1,12 @@
+{
+    "google": {
+        "client_id":"378857225270-fou86c7ltj8dvi9op1ul4ovtqmjjio64.apps.googleusercontent.com",
+        "client_secret":"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"
+    },"facebook":{
+        "client_id":"860906805601947",
+        "client_secret":"c66c7d9fa9642f8f9c8f7dc1f3d24f50"
+    },"discord":{
+        "client_id":"1151796903709786122",
+        "client_secret":"tAPX_YcwU2yyN35c_EkBih58dva825pC"
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "google": {
+        "auth_uri": "https://accounts.google.com/o/oauth2/v2/auth",
+        "token_url": "https://oauth2.googleapis.com/token",
+        "userInfo": "https://www.googleapis.com/oauth2/v3/userinfo",
+        "userEmail": "https://www.googleapis.com/oauth2/v3/useremail",
+        "scope": "profile email"
+    },
+    "facebook": {
+        "auth_uri": "https://www.facebook.com/v18.0/dialog/oauth",
+        "token_url": "https://graph.facebook.com/v18.0/oauth/access_token",
+        "userInfo": "https://graph.facebook.com/me",
+        "scope": "id,name,email"
+    },
+    "discord": {
+        "auth_uri": "https://discord.com/api/oauth2/authorize",
+        "token_url": "https://discord.com/api/oauth2/token",
+        "userInfo": "https://discord.com/api/users/@me",
+        "scope": "identify email"
+    }
+}

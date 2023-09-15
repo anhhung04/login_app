@@ -1,0 +1,56 @@
+version: '1.0'
+services:
+  login_app_db_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgreSQL
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=login_app
+      - POSTGRES_PASSWORD=123456789
+      - POSTGRES_DB=login_app_db
+    ports:
+      - "5432:5432"
+    networks:
+      - server_database
+    # volumes:
+    #   - db_data:/var/lib/postgresql/data
+  redis_cache:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks: 
+      - server_database
+    # volumes:
+    #   - redis_data:/data
+  login_app_server:
+      depends_on:
+        - login_app_db_server
+        - redis_cache
+      build:
+        context: .
+        dockerfile: Dockerfile
+      restart: unless-stopped
+      env_file: .env
+      environment:
+        - PGUSER=login_app
+        - PGHOST=login_app_db_server
+        - PGDATABASE=login_app_db
+        - PGPASSWORD=123456789
+        - PGPORT=5432
+        - REDIS_URL=redis://redis_cache:6379
+        - COOKIE_SECRET=123456789
+        - DOMAIN=localhost:3000
+      ports:
+      - "3000:3000"
+      networks:
+        - server_database
+
+networks:
+  server_database:
+    driver: bridge
+
+volumes:
+  db_data:
+  redis_data:
