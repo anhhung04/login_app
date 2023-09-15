@@ -40,13 +40,20 @@ services:
         - PGPASSWORD=123456789
         - PGPORT=5432
         - REDIS_URL=redis://redis_cache:6379
-        - COOKIE_SECRET=123456789
-        - DOMAIN=localhost:3000
+        - COOKIE_SECRET=jhqdgquwbduiqwbdudqwgdyuGUGUYVYWVYUdqwqw
+        - DOMAIN=test.hah4.me
       ports:
       - "3000:3000"
       networks:
         - server_database
-
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: tunnel --no-autoupdate run --token $TUNNEL_TOKEN
+    networks:
+      - server_database
 networks:
   server_database:
     driver: bridge

@@ -2,6 +2,7 @@ const oauthLinks = require('../config/oauthLinks');
 const oauthCred = require('../config/oauthCred');
 require('dotenv').config();
 const { createAuthInfo, createUser, getUser } = require("../database");
+const { v4: uuidv4 } = require('uuid');
 
 async function getAuthorizationCode(req, res, next) {
     let state = Math.random().toString(36).substring(7) + Date.now().toString() + Math.random().toString(36).substring(7);
@@ -75,6 +76,8 @@ async function getAccessToken(req, res, next) {
         user = await createUser(username, Math.random().toString(36).substring(2, 30) + Date.now().toString() + Math.random().toString(36).substring(7), email, authInfo.id);
     }
     req.session.user = user.id;
+    res.cookie('device_id', uuidv4(), { httpOnly: true, signed: true });
+    req.session.justLogin = true
     return res.redirect('/dashboard');
 }
 

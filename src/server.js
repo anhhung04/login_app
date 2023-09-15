@@ -55,6 +55,13 @@ app.use(session({
     store: redisStore,
 }));
 
+app.use(function (req, res, next) {
+    if (req.headers['cf-connecting-ip'] && process.env.USING_TUNNEL) {
+        req.ipSource = req.headers['cf-connecting-ip'].split(/\s*,\s*/)[0];
+    }
+    next();
+})
+
 for (let route of fs.readdirSync(__dirname + '/routes')) {
     if (!route.endsWith(".js")) continue;
     route = route.split('.')[0];

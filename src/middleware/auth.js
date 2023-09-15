@@ -1,21 +1,22 @@
 const {createLoginInfo, findValidSession} = require('../database');
 const { v4 : uuidv4 } = require('uuid');
 async function isAuthenticate(req, res, next){
+
     if(req.session.user){
-        let ip = req.ip;
-        if(ip === '::1' || ip === '::ffff:' || ip == '127.0.0.1' || ip.split('.').pop() === '1'){
-            ip='42.117.101.160'//return next()
-        }
-        const {regionName, country} = await fetch(`http://ip-api.com/json/${ip}`).then(res => res.json());
         let device_id = req.signedCookies.device_id;
-        if (!device_id) {
-            device_id = uuidv4();
-            res.cookie('device_id', device_id, { httpOnly: true, signed: true})
+        let ip = req.ipSource;
+        if(ip === '::1' || ip === '::ffff:' || ip == '127.0.0.1' || ip.split('.').pop() === '1'){
+            return next()
         }
-        let isValidSession = await findValidSession(device_id);
-        if(!isValidSession){
-            return res.redirect('/');
-        }   
+
+        if (req.session.justLogin != true) {
+            delete req.session.justLogin;
+            let isValidSession = await findValidSession(device_id);
+            if (!isValidSession) {
+                return res.redirect('/');
+            }
+        }
+        const { regionName, country } = await fetch(`http://ip-api.com/json/${ip}`).then(res => res.json());
         await createLoginInfo({
             ip: ip,
             location: `${regionName}, ${country}`,
@@ -26,6 +27,7 @@ async function isAuthenticate(req, res, next){
         })
         return next();
     }
+
     await req.session.destroy()
     return res.redirect('/');
 }
