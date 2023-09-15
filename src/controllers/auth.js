@@ -22,7 +22,6 @@ async function createUserLocal(req, res, next){
         res.status(409).json({message: "User already exists"});
     }
     const newUser = await createUser(username, password, email);
-    console.log("🚀 ~ file: auth.js:25 ~ createUserLocal ~ newUser:", newUser)
     req.session.user = newUser.id;
     return res.redirect('/dashboard');
 }

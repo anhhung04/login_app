@@ -1,12 +1,16 @@
 const {Router, json} = require('express');
 const {isAuthenticate} = require('../middleware/auth');
-const {getLoginInfos, getUserById, deleteLoginInfo} = require('../database');
+const { getLoginInfos, getUserById, deleteLoginInfo, findValidSession } = require('../database');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+    let isValidSession = await findValidSession(req.signedCookies.device_id);
+    if (isValidSession) {
+        return res.redirect('/dashboard');
+    }
     res.render('index');
 })
 
