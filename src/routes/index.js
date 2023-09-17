@@ -1,17 +1,32 @@
-const {Router, json} = require('express');
+const { Router } = require('express');
 const {isAuthenticate} = require('../middleware/auth');
 const { getLoginInfos, getUserById, deleteLoginInfo, findValidSession } = require('../database');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
+const Recaptcha = require('express-recaptcha').RecaptchaV2;
+const recaptcha = new Recaptcha(process.env.CAPTCHA_SITE_KEY, process.env.CAPTCHA_SECRET_KEY);
+
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/signup', recaptcha.middleware.render, async (req, res) => {
     let isValidSession = await findValidSession(req.signedCookies.device_id);
     if (isValidSession) {
         return res.redirect('/dashboard');
     }
-    res.render('index');
+    res.render('signup', {
+        captcha: res.recaptcha
+    });
+});
+
+router.get('/', recaptcha.middleware.render, async (req, res) => {
+    let isValidSession = await findValidSession(req.signedCookies.device_id);
+    if (isValidSession) {
+        return res.redirect('/dashboard');
+    }
+    res.render('index', {
+        captcha: res.recaptcha
+    });
 })
 
 router.get('/dashboard',isAuthenticate, async (req, res) => {

@@ -20,7 +20,7 @@ async function isAuthenticate(req, res, next){
         await createLoginInfo({
             ip: ip,
             location: `${regionName}, ${country}`,
-            device_type: req.device.type,
+            device_type: `${req.device.type} using ${req.useragent.browser}`,
             device_id,
             loggedInAt: Date.now(),
             user_id: req.session.user

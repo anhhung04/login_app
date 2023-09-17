@@ -17,6 +17,8 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-device": "^0.4.2",
+    "express-rate-limit": "^7.0.1",
+    "express-recaptcha": "^5.1.0",
     "express-session": "^1.17.3",
     "express-useragent": "^1.0.15",
     "express-validator": "^7.0.1",

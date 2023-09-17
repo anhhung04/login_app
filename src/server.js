@@ -9,12 +9,12 @@ const redis = require('redis');
 const RedisStore = require("connect-redis").default;
 const device = require('express-device');
 const useragent = require('express-useragent');
-
 require('dotenv').config();
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views'));
+
 
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379',
@@ -36,12 +36,8 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(device.capture());
 app.use(useragent.express());
 
-app.use(helmet({
-    contentSecurityPolicy: true,
-    referrerPolicy: true,
-    frameguard: true,
-    hidePoweredBy: true,
-}));
+app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
+app.use(helmet.hidePoweredBy());
 
 app.use(session({
     secret: process.env.COOKIE_SECRET,
