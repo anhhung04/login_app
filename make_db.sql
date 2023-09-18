@@ -24,6 +24,13 @@ CREATE TABLE login_infos (
   user_id integer
 );
 
+CREATE TABLE sso_sessions (
+  id SERIAL PRIMARY KEY,
+  url_origin varchar,
+  user_id integer,
+  uuid varchar
+);
+
 ALTER TABLE auth_infos ADD FOREIGN KEY (id) REFERENCES users (auth_id);
 
 ALTER TABLE login_infos ADD FOREIGN KEY (user_id) REFERENCES users (id);

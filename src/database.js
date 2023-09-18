@@ -73,6 +73,19 @@ const findValidSession = async function(device_id){
     return results.rows[0]
 }
 
+const storeApplication = async function ({ url_origin, user_id, uuid }) {
+    const results = await pool.query('INSERT INTO sso_sessions (url_origin, user_id, uuid) VALUES ($1, $2, $3) RETURNING *', [url_origin, user_id, uuid]);
+    return results.rows[0];
+};
+
+const getApplication = async function (uuid) {
+    const results = await pool.query('SELECT * FROM sso_sessions WHERE uuid = $1', [uuid]);
+    if (results.rows.length > 0) {
+        await pool.query('DELETE FROM sso_sessions WHERE uuid = $1', [uuid]);
+    }
+    return results.rows[0];
+}
+
 module.exports = {
     pool,
     getUser,
@@ -82,5 +95,7 @@ module.exports = {
     getUserById,
     createAuthInfo,
     deleteLoginInfo,
-    findValidSession
+    findValidSession,
+    storeApplication,
+    getApplication
 }

@@ -131,4 +131,6 @@ dist
 
 dist/
 
+demo_sso_server/node_modules/
+
 src/config/oauthCred.json

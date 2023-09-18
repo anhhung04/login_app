@@ -1,6 +1,7 @@
 version: '1.0'
 services:
   login_app_db_server:
+    image: postgres_db
     build:
       context: .
       dockerfile: Dockerfile.postgreSQL
@@ -23,7 +24,7 @@ services:
     networks: 
       - server_database
     # volumes:
-    #   - redis_data:/data
+    #   - redis_data:/cache_data
   login_app_server:
       depends_on:
         - login_app_db_server
@@ -42,10 +43,28 @@ services:
         - REDIS_URL=redis://redis_cache:6379
         - COOKIE_SECRET=jhqdgquwbduiqwbdudqwgdyuGUGUYVYWVYUdqwqw
         - DOMAIN=test.hah4.me
+        - SSO_SECRET_KEY=dGhpc2lzYXN1cGVyc2VjcmV0c3Nva2V5MTIzNA
       ports:
       - "3000:3000"
       networks:
         - server_database
+  demo_sso_server:
+    depends_on:
+      - login_app_server
+    image: demo_sso_server
+    build:
+      context: demo_sso_server/
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - SSO_SECRET_KEY=dGhpc2lzYXN1cGVyc2VjcmV0c3Nva2V5MTIzNA
+      - COOKIE_SECRET=jhqdgquwbduiqwbdudqwgdyuGUGUYVYWVYUdqwqw
+    ports:
+      - 5000:5000
+    command: node index.js
+    networks:
+      - server_database
   tunnel:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped

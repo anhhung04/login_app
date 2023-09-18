@@ -1,5 +1,7 @@
 FROM postgres:9.3
-ENV POSTGRES_USER docker
-ENV POSTGRES_PASSWORD docker
-ENV POSTGRES_DB docker
-COPY CreateDB.sql /docker-entrypoint-initdb.d/CreateDB.sql
+ENV POSTGRES_USER login_app
+ENV POSTGRES_PASSWORD 123456789
+ENV POSTGRES_DB login_app_db
+COPY ./make_db.sql /docker-entrypoint-initdb.d/make_db.sql
+EXPOSE 5432
+
