@@ -16,9 +16,12 @@ const isAuthenticated = async (req, res, next) => {
     if (req.signedCookies.user_info) {
         return next();
     }
-    return res.redirect(`/`);
+    return res.redirect(`/login`);
 };
 
+app.get('/login', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+})
 
 app.get('/', isAuthenticated, (req, res) => {
     const { username, email } = req.signedCookies.user_info;
