@@ -13,12 +13,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 const isAuthenticated = async (req, res, next) => {
-    const redirectURL = "https://ssodemo.hah4.me/sso/call";
-    const params = new URLSearchParams({ redirectURL }).toString();
     if (req.signedCookies.user_info) {
         return next();
     }
-    return res.redirect(`https://test.hah4.me/sso/login?${params}`);
+    return res.redirect(`/`);
 };
 
 

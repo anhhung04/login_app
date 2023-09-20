@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SSO Login</title>
+    </head>
+    <body>
+        <h1>Welcome to Your Application</h1>
+        <div id="login-container">
+            <button id="login-button">Login with SSO</button>
+        </div>
+
+        <!-- Add your application content here -->
+
+        <script>
+            const redirectURL = "https://ssodemo.hah4.me/sso/call";
+            const params = new URLSearchParams({ redirectURL }).toString();
+        
+            function initiateSSOLogin() {
+                // Redirect the user to the SSO provider's login page
+                window.location.href = `https://test.hah4.me/sso/login?${params}`;
+            }
+
+            function checkSSOAuthentication() {
+                //make false by default
+                return false;
+            }
+
+            document
+                .getElementById("login-button")
+                .addEventListener("click", function () {
+                    if (checkSSOAuthentication()) {
+                        // User is authenticated via SSO, redirect to the application's main page.
+                        window.location.href = "/";
+                    } else {
+                        // If not authenticated, initiate SSO login.
+                        initiateSSOLogin();
+                    }
+                });
+        </script>
+    </body>
+</html>
