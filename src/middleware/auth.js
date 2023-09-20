@@ -20,7 +20,7 @@ async function isAuthenticate(req, res, next) {
     }
 
     if (isValidSession) {
-        delete req.session.justLogin;
+        let ip = req.ipSource
 
         if (ip === '::1' || ip === '::ffff:' || ip == '127.0.0.1' || ip.split('.').pop() === '1') {
             return next()
