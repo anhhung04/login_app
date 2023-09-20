@@ -13,8 +13,9 @@ async function checkUserLocal(req, res, next){
         res.status(403).json({message: "Invalid credentials"});
     }
     req.session.user = user.id;
-    res.cookie('device_id', uuidv4(), { httpOnly: true, signed: true });
     req.session.justLogin = true
+    res.cookie('device_id', uuidv4(), { httpOnly: true, signed: true });
+    await req.session.save()
     return res.redirect('/dashboard');
 }
 
@@ -28,6 +29,7 @@ async function createUserLocal(req, res, next){
     req.session.user = newUser.id;
     req.session.justLogin = true;
     res.cookie('device_id', uuidv4(), { httpOnly: true, signed: true });
+    await req.session.save()
     return res.redirect('/dashboard');
 }
 
