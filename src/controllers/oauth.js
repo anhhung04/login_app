@@ -12,6 +12,10 @@ async function getAuthorizationCode(req, res, next) {
         client_id: oauthCred[req.service].client_id,
         state,
     }
+    if (req.service == 'twitter') {
+        paramsObj.code_challenge = oauthCred[req.service].code_challenge;
+        paramsObj.code_challenge_method = oauthCred[req.service].code_challenge_method;
+    }
     if(req.service != 'facebook'){
         paramsObj.scope = oauthLinks[req.service].scope
     }
@@ -39,9 +43,11 @@ async function getAccessToken(req, res, next) {
             code: req.query.code,
             grant_type: 'authorization_code',
             redirect_uri: `https://${process.env.DOMAIN}/oauth/${req.service}/call`,
+            code_verifier: oauthCred[req.service].code_verifier,
         }).toString(),
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic ' + Buffer.from(`${oauthCred[req.service].client_id}:${oauthCred[req.service].client_secret}`).toString('base64'),
         },
     }).then(res => res.json());
     if (!tokenData.access_token) {
@@ -54,11 +60,11 @@ async function getAccessToken(req, res, next) {
         expire_in: 3600 * 1000 + Date.now(),
     });
     let userInfoFromProvider;
-    if (tokenData.token_type == 'Bearer') {
+    if (tokenData.token_type.toLowerCase() == 'bearer') {
         userInfoFromProvider = await fetch(`${oauthLinks[req.service].userInfo}`, {
             method: 'GET',
             headers: {
-                'Authorization': `${tokenData.token_type} ${tokenData.access_token}`,
+                'Authorization': `Bearer ${tokenData.access_token}`,
             }
         }).then(res => res.json());
     } else {
@@ -67,6 +73,9 @@ async function getAccessToken(req, res, next) {
         }).then(res => res.json());
     }
     let user;
+    if ('data' in userInfoFromProvider) {
+        userInfoFromProvider = userInfoFromProvider.data;
+    }
     let username = userInfoFromProvider.sub || userInfoFromProvider.id;
     let email = userInfoFromProvider.email || `${username}@${req.service}.com`;
     let checkUserInDB = await getUser(username);

@@ -3,7 +3,7 @@ const {getAuthorizationCode, getAccessToken} = require("../controllers/oauth")
 const router = Router();
 
 router.param('oauthService', function (req, res, next, oauthService) {
-    let services = ['google', 'facebook', 'discord']
+    let services = ['google', 'facebook', 'discord', 'twitter']
     if(services.includes(oauthService)){
         req.service = oauthService
         return next()
